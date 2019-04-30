@@ -1,7 +1,6 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8">
     <meta name="renderer" content="webkit">
@@ -22,25 +21,25 @@
 <body>
 <section class="headerwrap headerwrap2">
     <header>
-
         <div class="header2 header">
             <div class="top">
                 <div class="wp">
                     <div class="fl"><p>服务电话：<b>111111</b></p></div>
                     <!--登录后跳转-->
-
                     {% if request.user.is_authenticated %}
                         <div class="personal">
                             <dl class="user fr">
-                                <dd>{{ user.username }}<img class="down fr" src="{% static 'images/top_down.png' %}">
+                                <dd>{{ user.nick_name }}<img class="down fr" src="{% static 'images/top_down.png' %}"/>
                                 </dd>
-                                <dt><img width="20" height="20" src="{{ MEDIA_URL }}{{ user.image }}"></dt>
+                                <dt><img width="20" height="20" src="{{ MEDIA_URL }}{{ user.image }}"/></dt>
                             </dl>
                             <div class="userdetail">
                                 <dl>
-                                    <dt><img width="80" height="80" src="{{ MEDIA_URL }}{{ user.image }}"></dt>
+                                    <dt><img width="80" height="80" src="{{ MEDIA_URL }}{{ user.image }}"/>
+                                    </dt>
                                     <dd>
-                                        <p>{{ user.username }}</p>
+                                        {#                                        <h2>django</h2>#}
+                                        <p>{{ user.nick_name }}</p>
                                     </dd>
                                 </dl>
                                 <div class="btn">
@@ -49,22 +48,18 @@
                                 </div>
                             </div>
                         </div>
-                    {% else %}
-                        <a style="color:white" class="fr registerbtn" href="{% url 'users:register' %}">注册</a>
-                        <a style="color:white" class="fr loginbtn" href="{% url 'users:login' %}">登录</a>
-
+                        {% if all_message.count > 0 %}
+                            <a href="{% url 'users:user_message' %}">
+                                <div class="msg-num"><span id="MsgNum">{{ all_message.count }}</span></div>
+                            </a>
+                        {% endif %}
                     {% endif %}
-                    <a href="{% url 'users:user_message' %}">
-                        <div class="msg-num"><span id="MsgNum">0</span></div>
-                    </a>
-
-
                 </div>
             </div>
 
             <div class="middle">
                 <div class="wp">
-                    <a href="{% url 'index' %}"><img class="fl" src="{% static 'images/logo2.png' %}"></a>
+                    <a href="{% url 'index' %}"><img class="fl" src="{% static 'images/logo2.png' %}"/></a>
                     <h1>我的慕学网</h1>
                 </div>
             </div>
@@ -72,58 +67,43 @@
     </header>
 </section>
 
-
 <!--crumbs start-->
-
 <section>
-
     <div class="wp">
         <ul class="crumbs">
+
             <li><a href="{% url 'index' %}">首页</a>></li>
             <li><a href="{% url 'users:user_info' %}">个人中心</a>></li>
-            <li>{% block bread %}个人信息{% endblock %}</li>
+            {% block break %}
+                <li>个人信息</li>
+            {% endblock %}
         </ul>
     </div>
-
 </section>
 
 <section>
     <div class="wp list personal_list">
         <div class="left">
             <ul>
-                <li class="{% if link == 'info' %}active2{% endif %}"><a href="{% url 'users:user_info' %}">个人资料</a>
+                <li class="{% ifequal link 'info' %}active2{% endifequal %}"><a
+                        href="{% url 'users:user_info' %}">个人资料</a></li>
+                <li class="{% ifequal link 'course' %}active2{% endifequal %}"><a href="{% url 'users:user_course' %}">我的课程</a>
                 </li>
-                <li class="{% if link == 'course' %}active2{% endif %}"><a href="{% url 'users:user_course' %}">我的课程</a>
+                <li class="{% ifequal link 'fav' %}active2{% endifequal %}"><a href="{% url 'users:user_fav_org' %}">我的收藏</a>
                 </li>
-                <li class="{% if link == 'fav' %}active2{% endif %}"><a href="{% url 'users:user_fav_org' %}">我的收藏</a>
-                </li>
-                <li class="{% if link == 'message' %}active2{% endif %}">
+                <li class="{% ifequal link 'message' %}active2{% endifequal %}">
                     <a href="{% url 'users:user_message' %}" style="position: relative;">
                         我的消息
                     </a>
                 </li>
             </ul>
         </div>
-
-        {% block user-right %}
-        {% endblock %}
-
+        {% block right %}{% endblock %}
     </div>
 </section>
 
 
 <!--sidebar start-->
-<section>
-    <ul class="sidebar">
-        <li class="qq">
-            <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=2023525077&site=qq&menu=yes"></a>
-        </li>
-        <li class="totop"></li>
-    </ul>
-</section>
-<!--sidebar end-->
-<!--header start-->
-
 <div class="dialog" id="jsDialog">
     <div class="successbox dialogbox" id="jsSuccessTips">
         <h1>成功提交</h1>
@@ -136,7 +116,9 @@
     <!--提示弹出框-->
     <div class="bidtips dialogbox promptbox" id="jsComfirmDialig">
         <h1>确认提交</h1>
-        <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}"/></div>
+        <div class="close jsCloseDialog">
+            <img src="{% static 'images/dig_close.png' %}"/>
+        </div>
         <div class="cont">
             <h2>您确认提交吗？</h2>
             <dd class="autoTxtCount">
@@ -193,7 +175,7 @@
         <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}"/></div>
         <div class="center">
             <img src="{% static 'images/send.png' %}"/>
-            <p>我们已经向您的邮箱<span class="green" id="jsEmailToActive">{{ email }}</span>发送了邮件，<br/>为保证您的账号安全，请及时验证邮箱</p>
+            <p>我们已经向您的邮箱<span class="green" id="jsEmailToActive">12@13.com</span>发送了邮件，<br/>为保证您的账号安全，请及时验证邮箱</p>
             <p class="a"><a class="btn" id="jsGoToEmail" target="_blank" href="http://mail.qq.com">去邮箱验证</a></p>
             <p class="zy_success upmove"></p>
             <p style="display: none;" class="sendE2">没收到，您可以查看您的垃圾邮件和被过滤邮件，也可以再次发送验证邮件（<span class="c5c">60s</span>）</p>
@@ -254,6 +236,17 @@
 </div>
 <div class="bg" id="dialogBg"></div>
 
+<section>
+    <ul class="sidebar">
+        <li class="qq">
+            <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=1302982067&site=qq&menu=yes"></a>
+        </li>
+        <li class="totop"></li>
+    </ul>
+</section>
+<!--sidebar end-->
+{% block info %}
+{% endblock %}
 
 <script src="{% static 'js/selectUi.js' %}" type='text/javascript'></script>
 <script type="text/javascript" src="{% static 'js/plugins/laydate/laydate.js' %}"></script>
@@ -263,68 +256,14 @@
 <script src="{% static 'js/plugins/jquery.scrollLoading.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/validateDialog.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/deco-common.js' %}" type="text/javascript"></script>
-
 <script src='{% static 'js/plugins/jquery.upload.js' %}' type='text/javascript'></script>
 <script src="{% static 'js/validate.js' %}" type="text/javascript"></script>
 <script src="{% static 'js/deco-user.js' %}"></script>
 
 <script type="text/javascript">
-    $('.jsDeleteFav_course').on('click', function () {
-        var _this = $(this),
-            favid = _this.attr('data-favid');
-        $.ajax({
-            cache: false,
-            type: "POST",
-            url: "{% url 'organization:add_fav' %}",
-            data: {
-                fav_type: 1,
-                fav_id: favid,
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
-            async: true,
-            success: function (data) {
-                Dml.fun.winReload();
-            }
-        });
-    });
-    $('.jsDeleteFav_teacher').on('click', function () {
-        var _this = $(this),
-            favid = _this.attr('data-favid');
-        $.ajax({
-            cache: false,
-            type: "POST",
-            url: "{% url 'organization:add_fav' %}",
-            data: {
-                fav_type: 3,
-                fav_id: favid,
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
-            async: true,
-            success: function (data) {
-                Dml.fun.winReload();
-            }
-        });
-    });
-    $('.jsDeleteFav_org').on('click', function () {
-        var _this = $(this),
-            favid = _this.attr('data-favid');
-        $.ajax({
-            cache: false,
-            type: "POST",
-            url: "{% url 'organization:add_fav' %}",
-            data: {
-                fav_type: 2,
-                fav_id: favid,
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
-            async: true,
-            success: function (data) {
-                Dml.fun.winReload();
-            }
-        });
-    });
-</script>
 
+
+</script>
 <script>
     var shareUrl = '',
         shareText = '',
@@ -388,9 +327,6 @@
     };
     with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com../api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];
 </script>
-
+{% block js %}{% endblock %}
 </body>
 </html>
-
-
-

@@ -13,6 +13,8 @@ import json
 from operation.models import UserFavorite, UserMessage
 from organization.models import CourseOrg, Teacher
 from course.models import Course
+from pure_pagination import PageNotAnInteger, Paginator
+
 
 
 # Q：并集查询
@@ -180,9 +182,11 @@ class UserInfoView(LoginRequired, View):
     def get(self, request):
         user = request.user
         link = 'info'
+        all_message = UserMessage.objects.filter(user=user.id, has_read=False)
         return render(request, 'user/usercenter-info.html', {
             'user': user,
             'link': link,
+            'all_message': all_message,
         })
 
     def post(self, request):
@@ -274,9 +278,12 @@ class UserCourseView(LoginRequired, View):
     def get(self, request):
         user = request.user
         link = 'course'
+        all_message = UserMessage.objects.filter(user=user.id, has_read=False)
         return render(request, 'user/usercenter-mycourse.html', {
             'user': user,
             'link': link,
+            'all_message': all_message,
+
         })
 
 
@@ -326,6 +333,8 @@ class UserFavOrgView(View):
     def get(self, request):
         user = request.user
         link = 'fav'
+        fav_type = 'org'
+        all_message = UserMessage.objects.filter(user=user.id, has_read=False)
         user_fav = UserFavorite.objects.filter(user=user, fav_type=2)
         user_fav_org_ids = [user_org.fav_id for user_org in user_fav]
         user_fav_org = CourseOrg.objects.filter(id__in=user_fav_org_ids)
@@ -333,6 +342,9 @@ class UserFavOrgView(View):
             'user': user,
             'link': link,
             'user_fav_org': user_fav_org,
+            'fav_type': fav_type,
+            'all_message': all_message,
+
         })
 
 
@@ -340,6 +352,8 @@ class UserFavTeacherView(View):
     def get(self, request):
         user = request.user
         link = 'fav'
+        fav_type = 'teacher'
+        all_message = UserMessage.objects.filter(user=user.id, has_read=False)
         user_fav = UserFavorite.objects.filter(user=user, fav_type=3)
         user_fav_teacher_ids = [user_teacher.fav_id for user_teacher in user_fav]
         user_fav_teacher = Teacher.objects.filter(id__in=user_fav_teacher_ids)
@@ -347,6 +361,8 @@ class UserFavTeacherView(View):
             'user': user,
             'link': link,
             'user_fav_teacher': user_fav_teacher,
+            'fav_type': fav_type,
+            'all_message': all_message,
 
         })
 
@@ -355,14 +371,17 @@ class UserFavCourseView(View):
     def get(self, request):
         user = request.user
         link = 'fav'
+        fav_type = 'course'
+        all_message = UserMessage.objects.filter(user=user.id, has_read=False)
         user_fav = UserFavorite.objects.filter(user=user, fav_type=1)
-
         user_fav_course_ids = [user_course.fav_id for user_course in user_fav]
         user_fav_course = Course.objects.filter(id__in=user_fav_course_ids)
         return render(request, 'user/usercenter-fav-course.html', {
             'user': user,
             'link': link,
             'user_fav_course': user_fav_course,
+            'fav_type': fav_type,
+            'all_message': all_message
 
         })
 
@@ -371,12 +390,25 @@ class UserMessageView(View):
     def get(self, request):
         user = request.user
         link = 'message'
-        all_message = UserMessage.objects.filter(user=user.id)
+        all_message = UserMessage.objects.filter(user=user.id, has_read=False)
+        my_message = UserMessage.objects.filter(user=user.id).order_by('-add_time')
+        my_message.update(
+            has_read=True
+        )
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
 
+        # per_page:每页显示的条目个数
+        p = Paginator(my_message, request=request, per_page=9)
+
+        my_message = p.page(page)
         return render(request, 'user/usercenter-message.html', {
             'link': link,
             'user': user,
             'all_message': all_message,
+            'my_message': my_message,
         })
 
 

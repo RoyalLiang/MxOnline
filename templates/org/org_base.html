@@ -78,7 +78,7 @@
                         </p>
                     </div>
                     <div class="btn fr collectionbtn  notlogin
-                         "data-favid="22" data-fav-type="1">
+                         "data-favid="{{ org.id }}" data-fav-type="1">
 
                             {% if has_fav %}
                                 已收藏
@@ -183,7 +183,7 @@ $(function(){
         score = $precision.attr('data-star-scope'),
         option =  {
                     half		: true,
-                    path		: '{% static 'images/' %}',
+                    path		: '{% static 'images' %}',
                     precision	: true,
                     size		: 24,
                     starOff		: 'g_star.png',
@@ -207,10 +207,6 @@ $(function(){
 
             } else if (type === '11') {
                 favPraise($(this), 'pra', 1);
-
-            } else if (type === '4') {
-                favPraise($(this), 'fav', 4);
-
             }
         });
     });

@@ -1,6 +1,4 @@
 //修改个人中心邮箱验证码
-import * as $ from "../../extra_apps/xadmin/static/xadmin/vendor/jquery/jquery";
-
 function sendCodeChangeEmail($btn) {
     var verify = verifyDialogSubmit(
         [
@@ -24,11 +22,11 @@ function sendCodeChangeEmail($btn) {
         success: function (data) {
             if (data.email) {
                 Dml.fun.showValidateError($('#jsChangeEmail'), data.email);
-            } else if (data.status === 'success') {
+            } else if (data.status == 'success') {
                 Dml.fun.showErrorTips($('#jsChangeEmailTips'), "邮箱验证码已发送");
-            } else if (data.status === 'failure') {
+            } else if (data.status == 'failure') {
                 Dml.fun.showValidateError($('#jsChangeEmail'), "邮箱验证码发送失败");
-            } else if (data.status === 'success') {
+            } else if (data.status == 'success') {
             }
         },
         complete: function (XMLHttpRequest) {
@@ -53,7 +51,7 @@ function changeEmailSubmit($btn) {
         cache: false,
         type: 'post',
         dataType: 'json',
-        url: "/users/update_email/",
+        url: "/users/update_email/ ",
         data: $('#jsChangeEmailForm').serialize(),
         async: true,
         beforeSend: function (XMLHttpRequest) {
@@ -64,7 +62,7 @@ function changeEmailSubmit($btn) {
         success: function (data) {
             if (data.email) {
                 Dml.fun.showValidateError($('#jsChangeEmail'), data.email);
-            } else if (data.status === "success") {
+            } else if (data.status == "success") {
                 Dml.fun.showErrorTips($('#jsChangePhoneTips'), "邮箱信息更新成功");
                 setTimeout(function () {
                     location.reload();
@@ -146,46 +144,42 @@ $(function () {
         max: laydate.now()
     });
 
-    verify(
-        [
-            {id: '#nick_name', tips: Dml.Msg.epNickName, require: true}
-        ]
-    );
+    // verify(
+    //     [
+    //         {id: '#nick_name', tips: Dml.Msg.epNickName, require: true}
+    //     ]
+    // );
     //保存个人资料
     $('#jsEditUserBtn').on('click', function () {
-        let _self = $(this);
-        // $jsEditUserForm = $('#jsEditUserForm');
-        verify = verifySubmit(
-            [
-                {id: '#nick_name', tips: Dml.Msg.epNickName, require: true}
-            ]
-        );
-        if (!verify) {
-            return;
-        }
+        let _self = $(this),
+            $jsEditUserForm = $('#jsEditUserForm');
+        // verify = verifySubmit(
+        //     [
+        //         {id: '#nick_name', tips: Dml.Msg.epNickName, require: true}
+        //     ]
+        // );
+        // if (!verify) {
+        //     return;
+        // }
         $.ajax({
             cache: false,
-            type: 'POST',
-            // dataType: 'json',
+            type: 'post',
+            dataType: 'json',
             url: "/users/user_info/",
-            data: $('#jsEditUserForm').serialize(),
+            data: $jsEditUserForm.serialize(),
             async: true,
             beforeSend: function (XMLHttpRequest) {
                 _self.val("保存中...");
                 _self.attr('disabled', true);
             },
             success: function (data) {
-                if (data.nick_name) {
-                    _showValidateError($('#nick_name'), data.nick_name);
-                } else if (data.birday) {
-                    _showValidateError($('#birthday'), data.birday);
-                } else if (data.address) {
-                    _showValidateError($('#gender'), data.address);
-                } else if (data.address) {
-                    _showValidateError($('#address'), data.address);
-                } else if (data.address) {
-                    _showValidateError($('#phone'), data.address);
-                } else if (data.status === "fail") {
+                // if (data.nick_name) {
+                //     _showValidateError($('#nick_name'), data.nick_name);
+                // } else if (data.birday) {
+                //     _showValidateError($('#birth_day'), data.birday);
+                // } else if (data.address) {
+                //     _showValidateError($('#address'), data.address);
+                if (data.status === "fail") {
                     Dml.fun.showTipsDialog({
                         title: '保存失败',
                         h2: data.msg
@@ -196,9 +190,9 @@ $(function () {
                         h2: '个人信息修改成功！'
                     });
                     setTimeout(function () {
-                        // window.location.href = window.location.href;
-                        Dml.fun.winReload();
-                    }, 1500);
+                            window.location.href = window.location.href;
+                        }, 1500
+                    );
                 }
             },
             complete: function (XMLHttpRequest) {

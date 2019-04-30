@@ -190,7 +190,7 @@ class AddFavView(View):
                     if course.fav_nums < 0:
                         course.fav_nums = 0
                     course.save()
-                return HttpResponse('{"status": "fail", "msg": "收藏"}', content_type='application/json')
+                return HttpResponse('{"status": "success", "msg": "收藏"}', content_type='application/json')
 
             else:
                 user_fav = UserFavorite()

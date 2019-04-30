@@ -1,59 +1,79 @@
 {% extends 'user/user-base.html' %}
 {% load staticfiles %}
 {% block title %}
-    我的课程- 慕学在线网
+    我的消息 - 慕学在线网
 {% endblock %}
-{% block bread %}
-    我的消息
+
+{% block break %}
+    <li>我的消息</li>
 {% endblock %}
-{% block user-right %}
-    <div class="right" >
-		<div class="personal_des Releasecont">
-			<div class="head">
-				<h1>我的消息</h1>
-			</div>
+{% block right %}
+    <div class="right">
+        <div class="personal_des Releasecont">
+            <div class="head">
+                <h1>我的消息</h1>
 
-		</div>
-		<div class="personal_des permessage">
-			<div class="head">
-				<ul class="tab_header messagehead">
-					<li class="active"><a href="{% url 'users:user_message' %}">个人消息</a> </li>
-				</ul>
+            </div>
+
+        </div>
+        <div class="personal_des permessage">
+            <div class="head">
+                <ul class="tab_header messagehead">
+                    <li class="active"><a href="{% url 'users:user_message' %}">个人消息</a></li>
+                    {#                    <li><h1 style="margin-left: 300px;">一键已读</h1></li>#}
+                </ul>
 
 
-			</div>
-			<div class="messagelist">
-                {% for message in all_message %}
+            </div>
+            <div class="messagelist">
+                {% for message in my_message.object_list %}
                     <div class="messages">
                         <div class="fr">
-                            <div class="top"><span class="fl time">{{ message.add_time }}</span><span class="fr btn foldbtn"></span></div>
+                            <div class="top">
+                                <span class="fl time">
+                                    {{ message.add_time }}
+                                </span>
+                                <span class="delete jsDeleteFav_teacher">
+{#                                   <p class="delete jsDeleteFav_teacher" id="jsDeleteFav_teacher"></p>#}
+                                </span>
+                            </div>
                             <p>
                                 {{ message.message }}
                             </p>
                         </div>
                     </div>
                 {% endfor %}
-
-
-			</div>
-
-
-			<div class="pageturn pagerright">
-                <ul class="pagelist">
-
-
-
-
-
-                            <li class="active"><a href="?page=1">1</a></li>
-
-
-
-
-
-            </ul>
             </div>
-		</div>
+            <div class="pageturn pagerright">
+                <ul class="pagelist">
+                    {% if my_message.has_previous %}
+                        <li class="long"><a href="?{{ my_message.previous_page_number.querystring }}">上一页</a></li>
+                    {% endif %}
 
-	</div>
+                    {% for page in my_message.pages %}
+                        {% if page %}
+                            {% ifequal page my_message.number %}
+                                <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                            {% else %}
+                                <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+                            {% endifequal %}
+                        {% else %}
+                            <li class="none"><a href="">...</a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if my_message.has_next %}
+                        <li class="long"><a href="?{{ my_message.next_page_number.querystring }}">下一页</a></li>
+
+                    {% endif %}
+                    {#                    <li class="active"><a href="?page=1">1</a></li>#}
+
+                </ul>
+            </div>
+        </div>
+    </div>
 {% endblock %}
+
+{% block info %}{% endblock %}
+
+{% block js %}{% endblock %}

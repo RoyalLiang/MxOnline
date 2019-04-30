@@ -13,7 +13,7 @@ urlpatterns = (
     # 用户信息
     path('user_info/', UserInfoView.as_view(), name='user_info'),
     # 用户头像
-    path('user-image/', UploadImageView.as_view(), name='user-image'),
+    path('user/image/', UploadImageView.as_view(), name='user-image'),
     # 用户密码修改
     path('update/pwd/', ModifyPwdView.as_view(), name='update-pwd'),
     # 用户邮箱修改，发送邮箱验证码

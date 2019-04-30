@@ -63,14 +63,14 @@ function search_click(){
     var type = $('#jsSelectOption').attr('data-value'),
         keywords = $('#search_keywords').val(),
         request_url = '';
-    if(keywords === ""){
+    if(keywords == ""){
         return
     }
-    if(type === "course"){
-        request_url = "/course/course_list?keywords="+keywords
-    }else if(type === "teacher"){
+    if(type == "course"){
+        request_url = "/course/list?keywords="+keywords
+    }else if(type == "teacher"){
         request_url = "/org/teacher/list?keywords="+keywords
-    }else if(type === "org"){
+    }else if(type == "org"){
         request_url = "/org/list?keywords="+keywords
     }
     window.location.href = request_url
