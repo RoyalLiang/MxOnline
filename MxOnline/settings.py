@@ -101,9 +101,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mxonline',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
+        'USER': 'admin',
+        'PASSWORD': 'Lzy96800..',
+        'HOST': '47.102.117.109',
         'PORT': '3306',
     }
 }
@@ -150,10 +150,10 @@ STATICFILES_DIRS = [
 
 EMAIL_HOST = "smtp.qq.com"
 EMAIL_PORT = 587
-EMAIL_HOST_USER = '@qq.com'
-EMAIL_HOST_PASSWORD = ""
+EMAIL_HOST_USER = '1302982067@qq.com'
+EMAIL_HOST_PASSWORD = "hcfxuxodfdlcifcc"
 EMAIL_USE_TLS = True
-EMAIL_FROM = '@qq.com'
+EMAIL_FROM = '1302982067@qq.com'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

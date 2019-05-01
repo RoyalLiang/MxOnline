@@ -16,6 +16,7 @@ urlpatterns = [
     path('teacher/list/', TeacherListView.as_view(), name='teacher_list'),
 
     path('teacher/detail/<int:teacher_id>/', TeacherDetailView.as_view(), name='teacher_detail'),
-
+    # 分享
+    path('share/message/', SendShareEmailView.as_view(), name='share'),
 ]
 

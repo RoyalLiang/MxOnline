@@ -21,7 +21,7 @@
                         <div class="module1_5 box">
                             <a href="{% url 'course:course_detail' user_course.id %}">
                                 <img width="214" height="190" class="scrollLoading"
-                                     src="{{ MEDIA_URL }}{{ user_course.image }}"/>
+                                     src="{{ MEDIA_URL }}{{ user_course.course.image }}"/>
                             </a>
                             <div class="des">
                                 <a href="{% url 'course:course_detail' user_course.id %}"><h2>{{ user_course.course.name }}</h2></a>

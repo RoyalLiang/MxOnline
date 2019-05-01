@@ -6,7 +6,7 @@ from .forms import *
 import json
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
-
+from utils.send_email import send_share_email
 
 # Create your views here.
 
@@ -224,9 +224,12 @@ class TeacherListView(View):
     讲师列表
     """
     def get(self, request):
+        sort = request.GET.get('sort', '')
         all_teacher = Teacher.objects.all()
         teacher_num = all_teacher.count()
-        hot_teacher = all_teacher.order_by('-fav_nums')[:3]
+        hot_teacher = all_teacher.order_by('-click_nums')[:3]
+        if sort == 'hot':
+            all_teacher = all_teacher.order_by('-fav_nums')
         try:
             page = request.GET.get('page', 1)
         except PageNotAnInteger:
@@ -241,6 +244,7 @@ class TeacherListView(View):
             'all_teacher': all_teacher,
             'teacher_num': teacher_num,
             'hot_teacher': hot_teacher,
+            'sort': sort,
         })
 
 
@@ -265,3 +269,12 @@ class TeacherDetailView(View):
             'has_fav': has_fav,
             'org_has_fav': org_has_fav,
         })
+
+
+class SendShareEmailView(View):
+    def post(self, request):
+        info = request.POST.get('info', '')
+        teacher = Teacher.objects.get(pk=int(info))
+        send_share_email(teacher.name, teacher.work_years)
+        return HttpResponse('{"status": "success", "msg": "已分享"}', content_type='application/json')
+
