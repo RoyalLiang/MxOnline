@@ -16,3 +16,7 @@ class UserAskForm(forms.ModelForm):
             return mobile
         else:
             raise forms.ValidationError('手机号码非法', code='mobile_invalid')
+
+
+class EmailForm(forms.Form):
+    email = forms.EmailField(required=True, error_messages={"invalid": '邮箱输入错误'})

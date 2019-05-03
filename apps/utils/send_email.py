@@ -50,9 +50,10 @@ def generate_random_str(random_length):
     return s
 
 
-def send_share_email(name, years, email='1302982067@qq.com'):
-    email_title = '慕学在线网用户分享'
-    email_body = '我在#慕学在线#发现了教师“{0}”，对学习中的小伙伴很有帮助，一起来看看吧。金牌讲师，从业年限：{1}年'.format(name, years)
+def send_share_email(name, years, email):
+    email_title = '慕学在线-用户分享'
+    email_body = '我在http://127.0.0.1:8000/org/teacher/list，发现了教师-{0}，对学习中的小伙伴很有帮助，一起来看看吧。金牌讲师，从业年限：{1}年'.format(
+        name, years)
     send_status = send_mail(email_title, email_body, EMAIL_FROM, [email])
     if send_status:
         pass

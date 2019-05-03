@@ -8,6 +8,7 @@ from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from utils.send_email import send_share_email
 
+
 # Create your views here.
 
 
@@ -223,6 +224,7 @@ class TeacherListView(View):
     """
     讲师列表
     """
+
     def get(self, request):
         sort = request.GET.get('sort', '')
         all_teacher = Teacher.objects.all()
@@ -274,7 +276,9 @@ class TeacherDetailView(View):
 class SendShareEmailView(View):
     def post(self, request):
         info = request.POST.get('info', '')
-        teacher = Teacher.objects.get(pk=int(info))
-        send_share_email(teacher.name, teacher.work_years)
-        return HttpResponse('{"status": "success", "msg": "已分享"}', content_type='application/json')
-
+        email = EmailForm(request.POST)
+        if email.is_valid():
+            teacher = Teacher.objects.get(pk=int(info))
+            send_share_email(teacher.name, teacher.work_years, email.cleaned_data['email'])
+            return HttpResponse('{"status": "success", "msg": "分享成功。"}', content_type='application/json')
+        return HttpResponse('{"status": "fail", "msg": "分享失败，请检查邮箱输入是否有误。"}', content_type='application/json')
