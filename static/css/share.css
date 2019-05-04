@@ -171,7 +171,7 @@ button.close {
     }
 }
 
-.btn1 {
+.btn5 {
     display: inline-block;
     padding: 6px 12px;
     margin-bottom: 0;
@@ -193,24 +193,24 @@ button.close {
     border-radius: 4px
 }
 
-.btn1.active.focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn:active:focus, .btn:focus {
+.btn5.active.focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn:active:focus, .btn:focus {
     outline: 5px auto -webkit-focus-ring-color;
     outline-offset: -2px
 }
 
-.btn1.focus, .btn:focus, .btn:hover {
+.btn5.focus, .btn:focus, .btn:hover {
     color: #333;
     text-decoration: none
 }
 
-.btn1.active, .btn:active {
+.btn5.active, .btn:active {
     background-image: none;
     outline: 0;
     -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
     box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125)
 }
 
-.btn1.disabled, .btn[disabled], fieldset[disabled] .btn {
+.btn5.disabled, .btn[disabled], fieldset[disabled] .btn {
     cursor: not-allowed;
     filter: alpha(opacity=65);
     -webkit-box-shadow: none;
@@ -218,7 +218,7 @@ button.close {
     opacity: .65
 }
 
-a.btn1.disabled, fieldset[disabled] a.btn {
+a.btn5.disabled, fieldset[disabled] a.btn {
     pointer-events: none
 }
 

@@ -11,4 +11,6 @@ urlpatterns = (
     # 添加评论
     path('add_comment/', AddCommentsView.as_view(), name='add_comment'),
 
+    path('video/<int:video_id>/', VideoView.as_view(), name='video_play'),
+
 )

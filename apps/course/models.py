@@ -33,6 +33,7 @@ class Course(models.Model):
     image = models.ImageField(upload_to='course/%Y/%m', verbose_name="封面", blank=True)
     tag = models.CharField(default='', max_length=20, verbose_name="课程标签")
     click_nums = models.IntegerField(default=0, verbose_name="浏览量")
+    known = MDTextField(verbose_name='课程须知', default='')
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
 
     class Meta:
@@ -82,17 +83,22 @@ class Lesson(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.name
+        return self.course.name + ' ' + self.name
 
 
 class Video(models.Model):
     lesson = models.ForeignKey(Lesson, verbose_name="章节", on_delete=models.CASCADE)
     name = models.CharField(max_length=128, verbose_name="视频名")
+    content = models.FileField(upload_to="videos/", null=True, blank=True, verbose_name="视频内容")
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
-    url = models.CharField(max_length=128, verbose_name="访问地址", default='')
+    # url = models.CharField(max_length=128, verbose_name="访问地址", default='')
 
     def __str__(self):
         return self.name
+
+    def get_video_course(self):
+        return self.lesson.course.name
+    get_video_course.short_description = '课程名称'
 
     class Meta:
         verbose_name = "视频"
@@ -111,3 +117,17 @@ class CourseResource(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# 课程公告
+class CourseAnnouncement(models.Model):
+    course = models.ForeignKey(Course, verbose_name='公告课程', on_delete=models.CASCADE)
+    text = models.CharField(max_length=200, default='', verbose_name='课程公告')
+    add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
+
+    class Meta:
+        verbose_name = "课程公告"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.course.name + '的课程公告。'

@@ -15,13 +15,20 @@ from utils.mixin_utils import LoginRequired
 class CourseListView(View):
     def get(self, request):
         head = 'course'
+        sort = request.GET.get('sort', '')
         all_course = Course.objects.all()
+        if sort:
+            if sort == 'hot':
+                all_course = Course.objects.all().order_by('-fav_nums')
+            if sort == 'students':
+                all_course = Course.objects.all().order_by('-students')
         hot_course = all_course.order_by('-students')[:3]
         # 搜索
         search_keywords = request.GET.get('keywords', '')
         if search_keywords:
-            all_course = all_course.filter(Q(name__icontains=search_keywords)|
-                                           Q(desc__icontains=search_keywords)|Q(detail__icontains=search_keywords))    # name__icontains:sql中的like语句
+            all_course = all_course.filter(Q(name__icontains=search_keywords) |
+                                           Q(desc__icontains=search_keywords) | Q(
+                detail__icontains=search_keywords))  # name__icontains:sql中的like语句
         try:
             page = request.GET.get('page', 1)
         except PageNotAnInteger:
@@ -35,7 +42,7 @@ class CourseListView(View):
             'courses': courses,
             'head': head,
             'hot_course': hot_course,
-            # 'cc': cc,
+            'sort': sort,
         })
 
 
@@ -43,11 +50,8 @@ class CourseListView(View):
 class CourseDetailView(View):
     def get(self, request, course_id):
         course = Course.objects.get(pk=course_id)
-        course.click_nums += 1
-        course.save()
         tag = course.tag
         course_user = False
-
         course_fav = False
         org_fav = False
         if request.user.is_authenticated:
@@ -55,8 +59,10 @@ class CourseDetailView(View):
                 course_fav = True
             if UserFavorite.objects.filter(user=request.user, fav_id=int(course.course_org.id), fav_type=2):
                 org_fav = True
+            if UserCourse.objects.filter(user=request.user, course=course):
+                course_user = True
         if tag:
-            relate_courses = Course.objects.filter(tag=tag)[:2]
+            relate_courses = Course.objects.filter(tag=tag, course_category=course.course_category).order_by('-students')[:2]
         else:
             relate_courses = []
         return render(request, 'course/course-detail.html', {
@@ -78,19 +84,28 @@ class CourseVideoView(LoginRequired, View):
             course.save()
             user_course = UserCourse(user=request.user, course=course)
             user_course.save()
-        user_courses = UserCourse.objects.filter(course=course)
-        user_ids = [user_course.user.id for user_course in user_courses]
-        all_user_courses = UserCourse.objects.filter(user_id__in=user_ids)
-        # 取出所有课程id
-        course_ids = [user_course.course.id for user_course in all_user_courses]
-        related_courses = Course.objects.filter(id__in=course_ids).order_by('-click_nums')[:5]
+        all_course = Course.objects.filter(tag=course.tag, course_category=course.course_category).order_by('-add_time')
+        course_ids = [int(i.id) for i in all_course]
+        if course.id in course_ids:
+            course_ids.remove(int(course.id))
+            if course_ids is None:
+                course_ids = []
+
+        related_courses = Course.objects.filter(id__in=course_ids)[:5]
+        # user_ids = [user_course.user.id for user_course in user_courses]
+        # all_user_courses = UserCourse.objects.filter(user_id__in=user_ids)
+        # # 取出所有课程id
+        # course_ids = [user_course.course.id for user_course in all_user_courses]
+        # related_courses = Course.objects.filter(id__in=course_ids).order_by('-click_nums')[:5]
         all_lesson = course.lesson_set.all()
         all_resource = course.courseresource_set.all()
+        announcement = CourseAnnouncement.objects.last()
         return render(request, 'course/course-video.html', {
             'course': course,
             'all_lesson': all_lesson,
             'all_resource': all_resource,
             'related_courses': related_courses,
+            'announcement': announcement,
         })
 
 
@@ -98,12 +113,21 @@ class CourseVideoView(LoginRequired, View):
 class CommentCourseView(LoginRequired, View):
     def get(self, request, course_id):
         course = Course.objects.get(pk=course_id)
+        all_course = Course.objects.filter(tag=course.tag, course_category=course.course_category).order_by('-add_time')
+        course_ids = [int(i.id) for i in all_course]
+        if course.id in course_ids:
+            course_ids.remove(int(course.id))
+            if course_ids is None:
+                course_ids = []
+
+        related_courses = Course.objects.filter(id__in=course_ids)[:5]
         all_resource = course.courseresource_set.all()
         all_comments = course.coursecomment_set.all()
         return render(request, 'course/course-comment.html', {
             'course': course,
             'all_resource': all_resource,
             'all_comments': all_comments,
+            'related_courses': related_courses,
         })
 
 
@@ -125,3 +149,42 @@ class AddCommentsView(View):
                 return HttpResponse('{"status": "success", "msg": "评论成功"}', content_type='application/json')
             else:
                 return HttpResponse('{"status": "fail", "msg": "评论失败"}', content_type='application/json')
+
+
+class VideoView(View):
+    """
+    视频播放页面
+    """
+    def get(self, request, video_id):
+        video = Video.objects.get(pk=video_id)
+        course = video.lesson.course
+        user_courses = UserCourse.objects.filter(user=request.user, course=course)
+        if not user_courses:
+            course.students += 1
+            course.save()
+            user_course = UserCourse(user=request.user, course=course)
+            user_course.save()
+        all_course = Course.objects.filter(tag=course.tag, course_category=course.course_category).order_by('-add_time')
+        course_ids = [int(i.id) for i in all_course]
+        if course.id in course_ids:
+            course_ids.remove(int(course.id))
+            if course_ids is None:
+                course_ids = []
+
+        related_courses = Course.objects.filter(id__in=course_ids)[:5]
+        # user_ids = [user_course.user.id for user_course in user_courses]
+        # all_user_courses = UserCourse.objects.filter(user_id__in=user_ids)
+        # # 取出所有课程id
+        # course_ids = [user_course.course.id for user_course in all_user_courses]
+        # related_courses = Course.objects.filter(id__in=course_ids).order_by('-click_nums')[:5]
+        all_lesson = course.lesson_set.all()
+        all_resource = course.courseresource_set.all()
+        announcement = CourseAnnouncement.objects.last()
+        return render(request, 'course/course-play.html', {
+            'course': course,
+            'all_lesson': all_lesson,
+            'all_resource': all_resource,
+            'related_courses': related_courses,
+            'announcement': announcement,
+            'video': video,
+        })

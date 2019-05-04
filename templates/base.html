@@ -12,6 +12,8 @@
 
     <script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
     <script src="{% static 'js/jquery-migrate-1.2.1.min.js' %}" type="text/javascript"></script>
+    {% block customer_css %}{% endblock %}
+
 
 </head>
 <body>
@@ -19,19 +21,21 @@
     <header>
         <div class=" header">
             {% if request.user.is_authenticated %}
-                <div class="top">
-                    <div class="wp">
-                        <div class="fl">
-                            <p>服务电话：<b>111111</b></p>
+            <div class="top">
+                <div class="wp">
+                    <div class="fl">
+                        <p>服务电话：<b>111111</b></p>
 
-                        </div>
+                    </div>
 
-                        <!--登录后跳转-->
+                    <!--登录后跳转-->
+                    <div class="personal">
+                        {% if request.user.message.count > 0 %}
 
-                        <div class="personal">
                             <a style="margin-left: 20px;" href="{% url 'users:user_message' %}">
-                                <div class="msg-num"><span id="MsgNum">0</span></div>
+                                <div class="msg-num"><span id="MsgNum">{{ request.user.message.count }}</span></div>
                             </a>
+                            {% endif %}
                             <dl class="user fr">
                                 <dd><img class="down fr" src="{% static 'images/top_down.png' %}"/></dd>
                                 <dt><img width="20" height="20" src="{{ MEDIA_URL }}{{ user.image }}"/></dt>
@@ -40,8 +44,8 @@
                                 <dl>
                                     <dt><img width="80" height="80" src="{{ MEDIA_URL }}{{ user.image }}"/></dt>
                                     <dd>
-                                        <h2></h2>
-                                        <p>{{ user.username }}</p>
+{#                                        <h2>{{ user.name }}</h2>#}
+                                        <p>{{ user.nick_name }}</p>
                                     </dd>
                                 </dl>
                                 <div class="btn">
@@ -49,23 +53,24 @@
                                     <a class="fr" href="{% url 'users:logout' %}">退出</a>
                                 </div>
                             </div>
-                        </div>
+                            </div>
 
 
-                    </div>
-                </div>
-            {% else %}
-                <div class="top">
-                    <div class="wp">
-                        <div class="fl"><p>服务电话：<b>111111</b></p></div>
-                        <!--登录后跳转-->
+                            </div>
+                            </div>
+                        {% else %}
+                            <div class="top">
+                                <div class="wp">
+                                    <div class="fl"><p>服务电话：<b>111111</b></p></div>
+                                    <!--登录后跳转-->
 
-                        <a style="color:white" class="fr registerbtn" href="{% url 'users:register' %}">注册</a>
-                        <a style="color:white" class="fr loginbtn" href="{% url 'users:login' %}">登录</a>
+                                    <a style="color:white" class="fr registerbtn"
+                                       href="{% url 'users:register' %}">注册</a>
+                                    <a style="color:white" class="fr loginbtn" href="{% url 'users:login' %}">登录</a>
 
-                    </div>
-                </div>
-            {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
 
             <div class="middle">
                 <div class="wp">
@@ -109,48 +114,47 @@
         </div>
     </header>
 </section>
-    <!--crumbs start-->
-    {% block custom_body %}
+<!--crumbs start-->
+{% block custom_body %}
 
-    {% endblock %}
-    <footer>
-        <div class="footer">
-            <div class="wp">
-                <ul class="cont">
-                    <li class="logo"><a href=""><img src="{% static 'images/footlogo.png' %}"/></a></li>
-                    {#                <li class="code"><img src="{% static 'images/code.jpg' %}"/>#}
-                    {#                    <p class="center">扫描关注微信</p></li>#}
-                    <li class="third"><img class="fl" src="{% static 'images/tell.png' %}"/>
-                        <p class="tell">111111</p>
-                        <p class="time">周一至周日 9:00-18:00</p></li>
-                </ul>
+{% endblock %}
+<footer>
+    <div class="footer">
+        <div class="wp">
+            <ul class="cont">
+                <li class="logo"><a href=""><img src="{% static 'images/footlogo.png' %}"/></a></li>
+                {#                <li class="code"><img src="{% static 'images/code.jpg' %}"/>#}
+                {#                    <p class="center">扫描关注微信</p></li>#}
+                <li class="third"><img class="fl" src="{% static 'images/tell.png' %}"/>
+                    <p class="tell">111111</p>
+                    <p class="time">周一至周日 9:00-18:00</p></li>
+            </ul>
 
-            </div>
-            <p class="line"></p>
-            <div class="wp clear">
-                <span class="fl">慕学在线-在线学习交流平台</span>
-                <span class="fr"></span>
-            </div>
         </div>
-    </footer>
+        <p class="line"></p>
+        <div class="wp clear">
+            <span class="fl">慕学在线-在线学习交流平台</span>
+            <span class="fr"></span>
+        </div>
+    </div>
+</footer>
 
-    <section>
-        <ul class="sidebar">
-            <li class="qq">
-                <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=2023525077&site=qq&menu=yes"></a>
-            </li>
-            <li class="totop"></li>
-        </ul>
-    </section>
-    <script src="{% static 'js/selectUi.js' %}" type='text/javascript'></script>
-    <script src="{% static 'js/deco-common.js' %}" type='text/javascript'></script>
-    <script type="text/javascript" src="{% static 'js/plugins/laydate/laydate.js' %}"></script>
-    <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
-    <script src="{% static 'js/plugins/queryCity/js/public.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/unslider.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/plugins/jquery.scrollLoading.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/deco-common.js' %}" type="text/javascript"></script>
-    {% block customer_css %}{% endblock %}
+<section>
+    <ul class="sidebar">
+        <li class="qq">
+            <a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=2023525077&site=qq&menu=yes"></a>
+        </li>
+        <li class="totop"></li>
+    </ul>
+</section>
+<script src="{% static 'js/selectUi.js' %}" type='text/javascript'></script>
+<script src="{% static 'js/deco-common.js' %}" type='text/javascript'></script>
+<script type="text/javascript" src="{% static 'js/plugins/laydate/laydate.js' %}"></script>
+<script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+<script src="{% static 'js/plugins/queryCity/js/public.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/unslider.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/plugins/jquery.scrollLoading.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/deco-common.js' %}" type="text/javascript"></script>
 
 
 </body>

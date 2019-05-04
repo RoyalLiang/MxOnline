@@ -15,7 +15,7 @@ i {
     position: relative;
 }
 .wgt-ipt-wrap {
-    border: 1px solid #d3dce0;
+    /*border: 1px solid #d3dce0;*/
 }
 .ipt-fake-focus {
     border-color: #4d5559;

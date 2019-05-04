@@ -12,7 +12,6 @@
         </div>
     </section>
 
-
     <section>
         <div class="wp butler_list_box list">
             <div class='left'>
@@ -37,7 +36,7 @@
                         </li>
                         <li>
                             <h2>所在地区</h2>
-                            <div class="more">更多</div>
+{#                            <div class="more">更多</div>#}
                             <div class="cont">
                                 <a href="?ct={{ category }}"><span
                                         class="{% ifequal city_id '' %}active2{% endifequal %}">全部</span></a>
@@ -79,7 +78,7 @@
 
                                                 <img src="{% static 'images/authentication.png' %}"/>
 
-                                                <img src="{% static 'images/gold.png' %}"/>
+{#                                                <img src="{% static 'images/gold.png' %}"/>#}
 
                                             </div>
                                         </a>
@@ -88,16 +87,13 @@
                                         <li class="first"><p class="pic9">课程数：<span>{{ org.course_nums }}</span></p>
                                             <p class="c7">学习人数：<span>{{ org.students_nums }}</span></p></li>
                                         <li class="c8" style="padding-left:18px;">{{ org.address }}</li>
-                                        <li class="pic10" style="padding-left:18px;">经典课程：
-
-                                            <a href="/diary/19/">c语言基础入门</a>
-
-                                            <a href="/diary/16/">数据库基础</a>
+                                        <li class="pic10" style="padding-left:18px;">收藏人数：
+                                            <a>{{ org.fav_nums }}</a>
 
                                         </li>
                                     </ul>
                                 </dd>
-                                <div class="buy start_groupbuy jsShowPerfect2" data-id="22"><br/>联系<br/>服务</div>
+                                <div class="buy start_groupbuy jsShowPerfect2" data-id="{{ org.id }}"><br/>联系<br/>服务</div>
                             </dl>
                         {% endfor %}
 

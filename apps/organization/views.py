@@ -263,6 +263,7 @@ class TeacherDetailView(View):
                 has_fav = True
             if UserFavorite.objects.filter(user=request.user, fav_id=int(teacher.org.id), fav_type=2):
                 org_has_fav = True
+
         sort_teacher = Teacher.objects.all().order_by('-fav_nums')[:3]
         return render(request, 'teacher/teacher-detail.html', {
             'teacher': teacher,

@@ -13,14 +13,12 @@ class LessonInline(object):
 
 
 class CourseAdmin(object):
-    list_display = ['name', 'course_org', 'desc', 'degree', 'learn_time', 'students',
-                    'fav_nums', 'image', 'click_nums', 'add_time']
+    list_display = ['name', 'course_org', 'degree', 'learn_time', 'students',
+                    'fav_nums', 'click_nums', 'add_time']
 
-    search_fields = ['name', 'desc', 'detail', 'degree', 'students',
-                     'fav_nums', 'image', 'click_nums']
+    search_fields = ['name', 'degree', 'click_nums']
 
-    list_filter = ['name', 'desc', 'detail', 'degree', 'learn_time', 'students',
-                   'fav_nums', 'image', 'click_nums', 'add_time']
+    list_filter = ['name', 'degree', 'add_time']
 
     exclude = ['fav_nums', 'click_nums', 'students']
 
@@ -56,22 +54,32 @@ class LessonAdmin(object):
     search_fields = ['course', 'name']
 
     list_filter = ['course__name', 'name', 'add_time']
+    relfield_style = 'fk-ajax'
 
 
 class VideoAdmin(object):
-    list_display = ['lesson', 'name', 'add_time']
+    list_display = ['get_video_course', 'lesson', 'name', 'add_time']
 
     search_fields = ['lesson', 'name']
 
     list_filter = ['lesson', 'name', 'add_time']
+    relfield_style = 'fk-ajax'
 
 
 class CourseResourceAdmin(object):
-    list_display = ['course', 'name', 'download', 'add_time']
+    list_display = ['course', 'name', 'add_time']
 
-    search_fields = ['course', 'name', 'download']
+    search_fields = ['course', 'name']
 
-    list_filter = ['course', 'name', 'download', 'add_time']
+    list_filter = ['course', 'name', 'add_time']
+
+
+class CourseAnnouncementAdmin:
+    list_display = ['course', 'text', 'add_time']
+
+    search_fields = ['course']
+
+    list_filter = ['course', 'add_time']
 
 
 xadmin.site.register(CourseCategory, CourseCategoryAdmin)
@@ -79,3 +87,4 @@ xadmin.site.register(Course, CourseAdmin)
 xadmin.site.register(Lesson, LessonAdmin)
 xadmin.site.register(Video, VideoAdmin)
 xadmin.site.register(CourseResource, CourseResourceAdmin)
+xadmin.site.register(CourseAnnouncement, CourseAnnouncementAdmin)
