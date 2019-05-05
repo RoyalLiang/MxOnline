@@ -93,8 +93,8 @@ class OrgHomeView(View):
             if UserFavorite.objects.filter(user=request.user, fav_id=int(org_home.id), fav_type=2):
                 has_fav = True
         # all_course = org_home.org_course.all()[:4]
-        all_course = org_home.course_set.all()
-        all_teacher = org_home.teacher_set.all()[:3]
+        all_course = org_home.course_set.all().order_by('-students')[:4]
+        all_teacher = org_home.teacher_set.all().order_by('-fav_nums')[:2]
 
         return render(request, 'org/org-detail-homepage.html', {
             'org_home': org_home,
@@ -115,6 +115,16 @@ class OrgCourseView(View):
             if UserFavorite.objects.filter(user=request.user, fav_id=int(org_home.id), fav_type=2):
                 has_fav = True
         org_course = org_home.course_set.all()
+
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+
+        # per_page:每页显示的条目个数
+        p = Paginator(org_course, request=request, per_page=8)
+
+        org_course = p.page(page)
 
         return render(request, 'org/org-detail-course.html', {
             'org_course': org_course,
@@ -152,6 +162,15 @@ class OrgTeacherView(View):
             if UserFavorite.objects.filter(user=request.user, fav_id=int(org_home.id), fav_type=2):
                 has_fav = True
         org_teacher = org_home.teacher_set.all()
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+
+        # per_page:每页显示的条目个数
+        p = Paginator(org_teacher, request=request, per_page=8)
+
+        org_teacher = p.page(page)
         return render(request, 'org/org-detail-teachers.html', {
             'org_teacher': org_teacher,
             'org_home': org_home,

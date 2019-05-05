@@ -5,38 +5,59 @@
 {% block org_path %}机构课程{% endblock %}
 
 {% block org_right %}
-    <div class="right companycenter layout" >
-		<div class="head">
-			<h1>机构课程</h1>
-		</div>
-		<div class="brief group_list">
-            {% for course in org_course %}
-            <div class="module1_5 box">
-                    <a class="comp-img-box" href="course-detail.html">
+    <div class="right companycenter layout">
+        <div class="head">
+            <h1>机构课程</h1>
+        </div>
+        <div class="brief group_list">
+            {% for course in org_course.object_list %}
+                <div class="module1_5 box">
+                    <a class="comp-img-box" href="{% url 'course:course_detail' course.id %}">
 
                         <img width="214" height="195" src="{{ MEDIA_URL }}{{ course.image }}"/>
                     </a>
                     <div class="des">
-                        <a href="course-detail.html"><h2>{{ course.name }}</h2></a>
+                        <a href="{% url 'course:course_detail' course.id %}"><h2>{{ course.name }}</h2></a>
                         <span class="fl">课时：<i class="key">{{ course.learn_time }}</i></span>
                         <span class="fr">学习人数：{{ course.students }}</span>
                     </div>
                     <div class="bottom">
                         <span class="fl">{{ org_home.name }}</span>
-                         <span class="star fr  notlogin
+                        <span class="star fr  notlogin
                             " data-favid="13" data-fav-type="4">
-                            0
+                            {{ org_home.fav_nums }}
                         </span>
                     </div>
-            </div>
+                </div>
             {% endfor %}
-		</div>
-			<div class="pageturn">
-                <ul class="pagelist">
-                    <li class="active"><a href="?page=1">1</a></li>
-                </ul>
-            </div>
-	</div>
+        </div>
+        <div class="pageturn">
+            <ul class="pagelist">
+                {% if org_course.has_previous %}
+                    <li class="long"><a href="?{{ org_course.previous_page_number.querystring }}">上一页</a></li>
+                {% endif %}
+
+                {% for page in org_course.pages %}
+                    {% if page %}
+                        {% ifequal page org_course.number %}
+                            <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                        {% else %}
+                            <li><a href="?{{ page.querystring }}" class="page">{{ page }}</a></li>
+                        {% endifequal %}
+                    {% else %}
+                        <li class="none"><a href="">...</a></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if org_course.has_next %}
+                    <li class="long"><a href="?{{ org_course.next_page_number.querystring }}">下一页</a></li>
+
+                {% endif %}
+
+            </ul>
+        </div>
+
+    </div>
 {% endblock %}
 
 
