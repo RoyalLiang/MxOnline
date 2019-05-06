@@ -1,3 +1,8 @@
+import os
+
+from django.contrib import auth
+
+from MxOnline import settings
 from .models import *
 from organization.models import CourseOrg
 import xadmin
@@ -64,6 +69,18 @@ class VideoAdmin(object):
 
     list_filter = ['lesson', 'name', 'add_time']
     relfield_style = 'fk-ajax'
+
+    def save_model(self, request, obj, form, change):
+        '''
+        admin
+        '''
+        obj.save()
+        video_url = os.path.join(settings.MEDIA_ROOT, str(obj.video))
+        # linux设置视频文件权限
+        os.system("chmod 644 %s" % video_url)
+        # obj.image = 'video_image/%s' % auth.get_video_pic(video_url)
+        obj.save()
+        super().save_model(request, obj, form, change)
 
 
 class CourseResourceAdmin(object):
