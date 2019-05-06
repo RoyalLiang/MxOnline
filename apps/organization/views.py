@@ -248,6 +248,11 @@ class TeacherListView(View):
         sort = request.GET.get('sort', '')
         all_teacher = Teacher.objects.all()
         teacher_num = all_teacher.count()
+        # 搜索
+        search_keywords = request.GET.get('keywords', '')
+        if search_keywords:
+            all_teacher = all_teacher.filter(Q(name__icontains=search_keywords) |
+                                       Q(desc__icontains=search_keywords))
         hot_teacher = all_teacher.order_by('-click_nums')[:3]
         if sort == 'hot':
             all_teacher = all_teacher.order_by('-fav_nums')

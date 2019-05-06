@@ -26,9 +26,11 @@ class CourseListView(View):
         # 搜索
         search_keywords = request.GET.get('keywords', '')
         if search_keywords:
-            all_course = all_course.filter(Q(name__icontains=search_keywords) |
-                                           Q(desc__icontains=search_keywords) | Q(
-                detail__icontains=search_keywords))  # name__icontains:sql中的like语句
+            all_course = all_course.filter(
+                Q(name__icontains=search_keywords) |
+                Q(desc__icontains=search_keywords) |
+                Q(detail__icontains=search_keywords)
+            )  # name__icontains:sql中的like语句
         try:
             page = request.GET.get('page', 1)
         except PageNotAnInteger:
