@@ -66,7 +66,7 @@ class Teacher(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.name
+        return self.org.name + ' ' + self.name
 
     def get_teacher_count(self):
         return self.objects.all().count()

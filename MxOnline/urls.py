@@ -23,7 +23,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('xadmin/', xadmin.site.urls),
+    path('mxonline/xadmin/', xadmin.site.urls),
     path('', IndexView.as_view(), name='index'),
     # 用户url
     path('users/', include('users.urls', namespace='users')),

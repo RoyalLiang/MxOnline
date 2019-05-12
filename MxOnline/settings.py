@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     # 分页
     'pure_pagination',
     'mdeditor',
+    # celery
 
 ]
 AUTH_USER_MODEL = "users.UserProfile"
@@ -148,6 +149,13 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+# celery settings
+# from .celery_config import *
+BROKER_BACKEND = 'redis'
+BROKER_URL = 'redis://localhost:6379/1'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/2'
+
+# 邮箱设置
 EMAIL_HOST = "smtp.qq.com"
 EMAIL_PORT = 587
 EMAIL_HOST_USER = ''
@@ -159,3 +167,16 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # LOGIN_URL = '/templates/login.html'
+
+# 七牛云
+# QINIU_ACCESS_KEY = '8TT0XQh6A_Esupg7ZrUOGVD_OpaWx8P88j0PkKsW'
+# QINIU_SECRET_KEY = 'p-mF2qTs15TKbmptJJOQUY9j2yPx8Z5PrT-AFu37'
+# QINIU_BUCKET_NAME = 'mxmovie'
+# QINIU_BUCKET_DOMAIN = 'ompehspge.bkt.clouddn.com/'
+#
+# # PREFIX_URL = 'https://'
+# MEDIA_URL = 'http://' + QINIU_BUCKET_DOMAIN + 'bucket/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+#
+# DEFAULT_FILE_STORAGE = 'qiniustorage.backends.QiniuMediaStorage'
+# STATICFILES_STORAGE  = 'qiniustorage.backends.QiniuStaticStorage'

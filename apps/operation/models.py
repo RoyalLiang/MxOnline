@@ -2,7 +2,7 @@ from django.db import models
 from datetime import datetime
 from users.models import UserProfile
 from course.models import Course
-
+from organization.models import CourseOrg
 
 # Create your models here.
 
@@ -67,3 +67,14 @@ class UserCourse(models.Model):
     class Meta:
         verbose_name = "用户课程"
         verbose_name_plural = verbose_name
+
+    # def save(self, *args, **kwargs):
+    #     """
+    #     将新增加的课程课程学习人数添加到课程机构
+    #     :param args:
+    #     :param kwargs:
+    #     :return:
+    #     """
+    #     self.course.course_org.students_nums += 1
+    #     # 调用父类的 save 方法将数据保存到数据库中
+    #     super(UserCourse, self).save(*args, **kwargs)

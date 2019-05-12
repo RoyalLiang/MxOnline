@@ -7,6 +7,7 @@ from operation.models import UserFavorite, UserCourse
 from .models import *
 from django.db.models import Q
 from utils.mixin_utils import LoginRequired
+import markdown
 
 
 # Create your views here.
@@ -56,6 +57,11 @@ class CourseDetailView(View):
         course_user = False
         course_fav = False
         org_fav = False
+        course.detail = markdown.markdown(course.detail.replace("\r\n", '  \n'), extensions=[
+            'markdown.extensions.extra',
+            'markdown.extensions.codehilite',
+            'markdown.extensions.toc',
+        ])
         if request.user.is_authenticated:
             if UserFavorite.objects.filter(user=request.user, fav_id=int(course.id), fav_type=1):
                 course_fav = True
@@ -67,6 +73,7 @@ class CourseDetailView(View):
             relate_courses = Course.objects.filter(tag=tag, course_category=course.course_category).order_by('-students')[:2]
         else:
             relate_courses = []
+
         return render(request, 'course/course-detail.html', {
             'course': course,
             'relate_courses': relate_courses,
@@ -83,6 +90,8 @@ class CourseVideoView(LoginRequired, View):
         user_courses = UserCourse.objects.filter(user=request.user, course=course)
         if not user_courses:
             course.students += 1
+            course.course_org.students_nums += 1
+            course.course_org.save()
             course.save()
             user_course = UserCourse(user=request.user, course=course)
             user_course.save()

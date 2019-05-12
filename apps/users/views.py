@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.backends import ModelBackend
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import View
 from .models import UserProfile, EmailVerifyRecord, Banner
 from django.db.models import Q
@@ -15,11 +16,10 @@ from organization.models import CourseOrg, Teacher
 from course.models import Course
 from pure_pagination import PageNotAnInteger, Paginator
 
+from .tasks import send_email
 
 
 # Q：并集查询
-
-
 # Create your views here.
 # 使用户可以使用邮箱等登陆
 class CustomBackend(ModelBackend):
@@ -107,6 +107,7 @@ class RegisterView(View):
         register_form = RegisterForm()
         return render(request, 'user/register.html', {'register_form': register_form})
 
+    @csrf_exempt
     def post(self, request):
         register_form = RegisterForm(request.POST)
         if register_form.is_valid():
@@ -121,8 +122,13 @@ class RegisterView(View):
             user_profile.password = make_password(password)
             user_profile.is_active = False
             user_profile.save()
-            send_register_email(email, 'register')
-            return render(request, 'user/login.html')
+            data = dict()
+            data['email'] = email
+            data['code'] = send_register_email(email, 'register')
+            data['send_type'] = 'register'
+            send_email.delay(data)
+            return render(request, 'index.html')
+
         else:
             return render(request, 'user/register.html', {'register_form': register_form})
 
@@ -132,12 +138,18 @@ class ForgetPwdView(View):
         forget_form = ForgetForm()
         return render(request, 'user/forgetpwd.html', {'forget_form': forget_form})
 
+    @csrf_exempt
     def post(self, request):
         forget_form = ForgetForm(request.POST)
         if forget_form.is_valid():
             email = request.POST.get('email', '')
             if UserProfile.objects.filter(email=email):
-                send_register_email(email, 'forget')
+                data = dict()
+                data['email'] = email
+                data['code'] = send_register_email(email, 'forget')
+                data['send_type'] = 'forget'
+                send_email.delay(data)
+                # send_register_email(email, 'forget')
                 return render(request, 'user/login.html')
             else:
                 return render(request, 'index.html')
@@ -147,7 +159,7 @@ class ForgetPwdView(View):
 
 class ResetPwdView(View):
     def get(self, request, reset_code):
-        all_records = EmailVerifyRecord.objects.filter(code=reset_code)
+        all_records = EmailVerifyRecord.objects.filter(code=reset_code, send_type='forget')
         if all_records:
             for record in all_records:
                 email = record.email
@@ -222,6 +234,7 @@ class ModifyPwdView(LoginRequired, View):
     """
     修改密码
     """
+
     def post(self, request):
         modify_form = ModifyPwdForm(request.POST)
         if modify_form.is_valid():
@@ -246,11 +259,18 @@ class SendEmailView(LoginRequired, View):
     """
     修改用户邮箱，发送验证码
     """
+
+    @csrf_exempt
     def get(self, request):
         email = request.GET.get('email', '')
         if UserProfile.objects.filter(email=email):
             return HttpResponse('{"email": "邮箱已存在"}', content_type='application/json')
-        send_register_email(email, 'update')
+        data = dict()
+        data['email'] = email
+        data['code'] = send_register_email(email, 'update')
+        data['send_type'] = 'update'
+        send_email.delay(data)
+        # send_register_email(email, 'update')
         return HttpResponse('{"status": "success"}', content_type='application/json')
 
 
@@ -258,6 +278,7 @@ class ModifyEmailView(View):
     """
     修改用户邮箱
     """
+
     def post(self, request):
         email = request.POST.get('email', '')
         code = request.POST.get('code', '')
@@ -434,6 +455,3 @@ def page_error(request):
     response = render_to_response('error_page/500.html', {})
     response.status_code = 500
     return response
-
-
-

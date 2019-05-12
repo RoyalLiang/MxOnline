@@ -29,10 +29,11 @@ class CourseAdmin(object):
 
     exclude = ['fav_nums', 'click_nums', 'students']
 
+
     # 页面嵌套
     inlines = [LessonInline]
     # 列表页字段的直接修改
-    # editable = ['degree']
+    editable = ['degree']
 
     # style_fields = {'detail': 'ueditor'}
     import_excel = True
@@ -79,7 +80,7 @@ class VideoAdmin(object):
         obj.save()
         video_url = os.path.join(settings.MEDIA_ROOT, str(obj.video))
         # linux设置视频文件权限
-        os.system("chmod 644 %s" % video_url)
+        os.system("chmod 777 %s" % video_url)
         obj.image = 'video_image/%s' % auth.get_video_pic(video_url)
         obj.save()
         super().save_model(request, obj, form, change)

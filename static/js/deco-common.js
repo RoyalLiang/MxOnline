@@ -109,7 +109,7 @@ function find_password_form_submit(){
         data:$('#jsFindPwdForm').serialize(),
         async: true,
         beforeSend:function(XMLHttpRequest){
-            $findPwdBtn.val("提交中...")
+            $findPwdBtn.val("提交中...");
             $findPwdBtn.attr("disabled","disabled")
         },
         success: function(data) {
